@@ -3,13 +3,11 @@ import smtplib
 from email.mime.text import MIMEText
 import yfinance as yf
 
-# Replace with your friend's email address
 RECIPIENTS = [
     "himanshudahiwale01@gmail.com",
     "pranay8thecake@gmail.com",
     "sanjaykumar2233@gmail.com"
-    
-] 
+]
 
 def fetch_and_email():
     print("Fetching Nifty 50 data...")
@@ -36,14 +34,14 @@ def fetch_and_email():
     msg = MIMEText(body)
     msg["Subject"] = subject
     msg["From"] = sender_email
-    msg["To"] = RECIPIENT_EMAIL
+    msg["To"] = ", ".join(RECIPIENTS)
 
     try:
         print("Connecting to email server...")
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
             server.login(sender_email, app_password)
-            server.sendmail(sender_email, [RECIPIENT_EMAIL], msg.as_string())
-        print(f"Email successfully sent to {RECIPIENT_EMAIL}")
+            server.sendmail(sender_email, RECIPIENTS, msg.as_string())
+        print(f"Email successfully sent to {len(RECIPIENTS)} recipients")
     except Exception as e:
         print(f"Failed to send email: {e}")
 
