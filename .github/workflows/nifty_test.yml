@@ -1,7 +1,10 @@
 name: Nifty Alert Monitor
 
 on:
-  workflow_dispatch: # This allows you to trigger the script manually with a button
+  schedule:
+    # Runs at 12:00 PM IST (06:30 UTC) every Monday through Friday
+    - cron: '30 6 * * 1-5'
+  workflow_dispatch: # Keeps the manual button so you can still test it
 
 jobs:
   run-monitor:
