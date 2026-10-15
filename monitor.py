@@ -4,7 +4,12 @@ from email.mime.text import MIMEText
 import yfinance as yf
 
 # Replace with your friend's email address
-RECIPIENT_EMAIL = "pranay8thecake@gmail.com" 
+RECIPIENTS = [
+    "himanshudahiwale01@gmail.com",
+    "pranay8thecake@gmail.com",
+    "sanjaykumar2233@gmail.com"
+    
+] 
 
 def fetch_and_email():
     print("Fetching Nifty 50 data...")
