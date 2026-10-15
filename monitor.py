@@ -3,6 +3,7 @@ import smtplib
 from email.mime.text import MIMEText
 import yfinance as yf
 
+# Your friends list
 RECIPIENTS = [
     "himanshudahiwale01@gmail.com",
     "pranay8thecake@gmail.com",
@@ -11,15 +12,19 @@ RECIPIENTS = [
 
 def fetch_and_email():
     print("Fetching Nifty 50 data...")
+    # Fetch 2 days of data to ensure we have the previous close
     ticker = yf.Ticker("^NSEI")
-    data = ticker.history(period="1d")
+    data = ticker.history(period="2d")
 
-    if len(data) < 1:
+    if len(data) < 2:
         print("Error: Insufficient market data returned.")
         return
 
+    prev_close = float(data["Close"].iloc[-2])
     current_price = float(data["Close"].iloc[-1])
-    print(f"SUCCESS! Current Nifty 50 Value is: {current_price:.2f}")
+    pct_change = ((current_price - prev_close) / prev_close) * 100
+
+    print(f"Prev Close: {prev_close:.2f} | Current: {current_price:.2f} | Change: {pct_change:.2f}%")
 
     sender_email = os.environ.get("SENDER_EMAIL")
     app_password = os.environ.get("EMAIL_APP_PASSWORD")
@@ -28,8 +33,16 @@ def fetch_and_email():
         print("Error: Email credentials not found in GitHub Secrets.")
         return
 
-    subject = f"TEST: Current Nifty 50 Value is {current_price:.2f}"
-    body = f"Hello!\n\nThe current Nifty 50 index value is: {current_price:.2f}\n\nThis is an automated test."
+    # Format email subject based on whether it is up or down
+    direction = "UP" if pct_change >= 0 else "DOWN"
+    subject = f"Nifty 50 is {direction} {abs(pct_change):.2f}% at 12 PM"
+    
+    body = (
+        f"Daily 12 PM Nifty 50 Update:\n\n"
+        f"Current Value: {current_price:.2f}\n"
+        f"Previous Close: {prev_close:.2f}\n"
+        f"Percentage Change: {pct_change:.2f}%\n"
+    )
 
     msg = MIMEText(body)
     msg["Subject"] = subject
