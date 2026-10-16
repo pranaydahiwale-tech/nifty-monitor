@@ -3,11 +3,9 @@ import smtplib
 from email.mime.text import MIMEText
 import yfinance as yf
 
-# Your existing friends list
+# Recipient list containing only your email address
 RECIPIENTS = [
-    "himanshudahiwale01@gmail.com",
-    "pranay8thecake@gmail.com",
-    "sanjaykumar2233@gmail.com"
+    "pranay8thecake@gmail.com"
 ]
 
 def fetch_and_email():
@@ -52,7 +50,7 @@ def fetch_and_email():
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
             server.login(sender_email, app_password)
             server.sendmail(sender_email, RECIPIENTS, msg.as_string())
-        print(f"Email successfully sent to {len(RECIPIENTS)} recipients")
+        print(f"Email successfully sent to {len(RECIPIENTS)} recipient(s)")
     except Exception as e:
         print(f"Failed to send email: {e}")
 
