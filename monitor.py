@@ -3,16 +3,14 @@ import smtplib
 from email.mime.text import MIMEText
 import yfinance as yf
 
-# Your friends list
+# Updated recipients list (Sanjaykumar removed)
 RECIPIENTS = [
     "himanshudahiwale01@gmail.com",
-    "pranay8thecake@gmail.com",
-    "sanjaykumar2233@gmail.com"
+    "pranay8thecake@gmail.com"
 ]
 
 def fetch_and_email():
     print("Fetching Nifty 50 data...")
-    # Fetch 2 days of data to ensure we have the previous close
     ticker = yf.Ticker("^NSEI")
     data = ticker.history(period="2d")
 
@@ -33,7 +31,6 @@ def fetch_and_email():
         print("Error: Email credentials not found in GitHub Secrets.")
         return
 
-    # Format email subject based on whether it is up or down
     direction = "UP" if pct_change >= 0 else "DOWN"
     subject = f"Nifty 50 is {direction} {abs(pct_change):.2f}% at 12 PM"
     
@@ -44,17 +41,21 @@ def fetch_and_email():
         f"Percentage Change: {pct_change:.2f}%\n"
     )
 
-    msg = MIMEText(body)
-    msg["Subject"] = subject
-    msg["From"] = sender_email
-    msg["To"] = ", ".join(RECIPIENTS)
-
     try:
         print("Connecting to email server...")
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
             server.login(sender_email, app_password)
-            server.sendmail(sender_email, RECIPIENTS, msg.as_string())
-        print(f"Email successfully sent to {len(RECIPIENTS)} recipients")
+            
+            # Loop through each recipient and send an individual email for privacy
+            for recipient in RECIPIENTS:
+                msg = MIMEText(body)
+                msg["Subject"] = subject
+                msg["From"] = sender_email
+                msg["To"] = recipient
+                
+                server.sendmail(sender_email, [recipient], msg.as_string())
+                
+        print(f"Email successfully sent individually to {len(RECIPIENTS)} recipient(s)")
     except Exception as e:
         print(f"Failed to send email: {e}")
 
